@@ -1,7 +1,9 @@
 package com.learn.reactive.programming.service;
 
 import com.learn.reactive.programming.entity.Customer;
+import com.learn.reactive.programming.entity.Student;
 import com.learn.reactive.programming.repo.CustomerRepo;
+import com.learn.reactive.programming.repo.StudentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -17,6 +19,9 @@ public class DemoService {
     @Autowired
     private CustomerRepo customerRepo;
 
+    @Autowired
+    private StudentRepo studentRepo;
+
     public Mono<Customer> createCustomer(Customer customer){
         if (customer.getId() == null) {
             customer.setId(UUID.randomUUID().toString());
@@ -28,11 +33,7 @@ public class DemoService {
     public Mono<Customer> getCustomerDetails(String id){
 
         Optional<Customer> existingCustomer = customerRepo.findById(id);
-        if(existingCustomer.isPresent()){
-            return Mono.just(existingCustomer.get());
-        }else {
-            return Mono.empty();
-        }
+        return existingCustomer.map(Mono::just).orElseGet(Mono::empty);
 
     }
 
@@ -70,5 +71,52 @@ public class DemoService {
 
 
 
+    public Mono<Student> createStudent(Student student){
+        if (student.getId() == null) {
+            student.setId(UUID.randomUUID().toString());
+        }
+        Student saveCustomer = studentRepo.save(student);
+        return Mono.just(saveCustomer);
+    }
+
+    public Mono<Student> getStudentDetails(String id){
+
+        Optional<Student> existingCustomer = studentRepo.findById(id);
+        return existingCustomer.map(Mono::just).orElseGet(Mono::empty);
+
+    }
+
+    public Flux<Student> getAllStudent(){
+        List<Student> allCustomer = studentRepo.findAll();
+        return Flux.fromIterable(allCustomer);
+    }
+
+    public Mono<Student> updateStudent(Student student){
+        Optional<Student> existingCustomer = studentRepo.findById(student.getId());
+
+        if(existingCustomer.isPresent()) {
+            Student toUpdate = existingCustomer.get();
+            toUpdate.setName(student.getName());
+            toUpdate.setEmail(student.getEmail());
+            toUpdate.setClassName(student.getClassName());
+            Student savedCustomer = studentRepo.save(toUpdate);
+            return Mono.just(savedCustomer);
+        } else {
+            return Mono.empty();
+        }
+
+    }
+
+    public Mono<Student> deleteStudent(String id) {
+
+        Optional<Student> existingCustomer = studentRepo.findById(id);
+        if (existingCustomer.isPresent()) {
+            studentRepo.delete(existingCustomer.get());
+            return Mono.just(existingCustomer.get());
+        } else {
+            return Mono.error(new RuntimeException("Student not found"));
+        }
+
+    }
 
 }

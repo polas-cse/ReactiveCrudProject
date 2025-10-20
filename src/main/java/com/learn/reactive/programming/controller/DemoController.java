@@ -1,6 +1,7 @@
 package com.learn.reactive.programming.controller;
 
 import com.learn.reactive.programming.entity.Customer;
+import com.learn.reactive.programming.entity.Student;
 import com.learn.reactive.programming.service.DemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,36 @@ public class DemoController {
     @DeleteMapping("/customer/delete/{id}")
     public Mono<Customer> deleteCustomer(@PathVariable String id){
         return demoService.getCustomerDetails(id);
+    }
+
+
+
+
+
+
+    @PostMapping("/student/create")
+    public Mono<Student> createStudent(@RequestBody Student student){
+        return demoService.createStudent(student);
+    }
+
+    @PutMapping("/student/update")
+    public Mono<Student> updateStudent(@RequestBody Student student){
+        return demoService.updateStudent(student);
+    }
+
+    @GetMapping("/student/list")
+    public Flux<Student> getAllStudent(){
+        return demoService.getAllStudent();
+    }
+
+    @GetMapping("/student/details/{id}")
+    public Mono<Student> getStudent(@PathVariable String id){
+        return demoService.getStudentDetails(id);
+    }
+
+    @DeleteMapping("/student/delete/{id}")
+    public Mono<Student> deleteStudent(@PathVariable String id){
+        return demoService.getStudentDetails(id);
     }
 
 }

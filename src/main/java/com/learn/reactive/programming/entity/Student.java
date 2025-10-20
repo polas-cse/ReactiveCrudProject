@@ -1,29 +1,32 @@
 package com.learn.reactive.programming.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.UUID;
 
-@Entity
+@Document(collection = "students")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer {
+public class Student {
 
     @Id
     private String id;
     private String name;
-    private String job;
+    private String email;
+    private String className;
 
-    public Customer(String name, String job) {
+
+    public Student(String name, String email, String className) {
         this.id = UUID.randomUUID().toString();
         this.name = name;
-        this.job = job;
+        this.email = email;
+        this.className = className;
     }
 }
