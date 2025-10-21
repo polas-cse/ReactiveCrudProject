@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: Reactive-Programming
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/shop_db?schema=shop_schema
+    username: shop
+    password: 1234
+
+  liquibase:
+    url: jdbc:postgresql://localhost:5432/shop_db
+    user: shop
+    password: 1234
+    change-log: classpath:changelog/db-master.xml
+
+
+  data:
+    mongodb:
+      uri: mongodb://shop:1234@localhost:27017/shop_db
+
+server:
+  port: 9090
+
+logging:
+  level:
+    org.springframework.boot.autoconfigure.liquibase: DEBUG
+    liquibase: DEBUG
+    org.liquibase: TRACE
