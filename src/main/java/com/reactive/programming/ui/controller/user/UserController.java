@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -42,9 +42,7 @@ public class UserController {
     }
 
     @PutMapping("/update/{userId}")
-    public Mono<ResponseEntity<UserDTO>> updateUser(
-            @PathVariable Long userId,
-            @Valid @RequestBody UserDTO userDTO) {
+    public Mono<ResponseEntity<UserDTO>> updateUser(@PathVariable Long userId, @Valid @RequestBody UserDTO userDTO) {
         return userService.updateUser(userId, userDTO)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());

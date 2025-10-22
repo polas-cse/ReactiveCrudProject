@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         log.info("Fetching user by ID: {}", userId);
         return userDao.getUserById(userId)
                 .map(user -> modelMapper.map(user, UserDTO.class))
-                .doOnSuccess(dto -> log.info("User found with userid: {}", userId))
+                .doOnSuccess(dto -> log.info("User found with user id: {}", userId))
                 .switchIfEmpty(Mono.error(new RuntimeException("User not found with ID: " + userId)));
     }
 

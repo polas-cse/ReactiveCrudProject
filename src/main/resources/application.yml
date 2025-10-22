@@ -12,6 +12,7 @@ spring:
     user: shop
     password: 1234
     change-log: classpath:changelog/db-master.xml
+    drop-first: false
 
   data:
     mongodb:
@@ -25,3 +26,4 @@ logging:
     org.springframework.boot.autoconfigure.liquibase: DEBUG
     liquibase: DEBUG
     org.liquibase: TRACE
+    org.jboss.logging: DEBUG

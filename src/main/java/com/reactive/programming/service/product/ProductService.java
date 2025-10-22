@@ -7,10 +7,9 @@ import reactor.core.publisher.Mono;
 public interface ProductService {
 
     Mono<ProductDTO> createProduct(ProductDTO productDTO);
-    Mono<ProductDTO> getProductById(String id);
+    Mono<ProductDTO> getProductById(Long productId);
     Flux<ProductDTO> getAllProducts();
-    Mono<ProductDTO> updateProduct(String id, ProductDTO productDTO);
-    Mono<Void> deleteProduct(String id);
-    Flux<ProductDTO> getProductsByCategory(String category);
+    Mono<ProductDTO> updateProduct(Long productId, ProductDTO productDTO);
+    Mono<Void> deleteProduct(Long productId);
 
 }

@@ -27,6 +27,7 @@ public class ProductDTO {
 
     @Positive(message = "Quantity must be positive")
     private int quantity;
+
     private String category;
     private Boolean active;
     private LocalDateTime createdAt;

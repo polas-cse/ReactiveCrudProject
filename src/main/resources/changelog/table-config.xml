@@ -30,7 +30,7 @@
     </changeSet>
 
     <changeSet id="create-product-table-0002" author="mdpolashossein">
-        <createTable tableName="product" schemaName="shop_schema">
+        <createTable tableName="products" schemaName="shop_schema">
             <column name="product_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false" primaryKeyName="pk_product"/>
             </column>
