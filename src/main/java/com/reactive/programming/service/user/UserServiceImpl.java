@@ -29,29 +29,50 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = modelMapper.map(userDTO, UserEntity.class);
 
         return userDao.createUser(userEntity)
-                .map(entity -> modelMapper.map(entity, UserDTO.class))
-                .doOnSubscribe(sub -> log.info("Creating user: {}", userDTO.getUserName()))
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .doOnSubscribe(sub -> log.info("Creating user with username: {}", userDTO.getUserName()))
                 .doOnSuccess(dto -> log.info("User created: {}", dto))
                 .doOnError(err -> log.error("Failed to create user: {}", err.getMessage()));
     }
 
     @Override
-    public Mono<UserDTO> getUserById(Long id) {
-        return null;
+    public Mono<UserDTO> getUserById(Long userId) {
+        log.info("Fetching user by ID: {}", userId);
+        return userDao.getUserById(userId)
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .doOnSuccess(dto -> log.info("User found with userid: {}", userId))
+                .switchIfEmpty(Mono.error(new RuntimeException("User not found with ID: " + userId)));
     }
 
     @Override
     public Flux<UserDTO> getAllUsers() {
-        return null;
+        log.info("Fetching all users");
+        return userDao.getAllUsers()
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .doOnComplete(() -> log.info("All users fetched"));
     }
 
     @Override
-    public Mono<UserDTO> updateUser(Long id, UserDTO userDTO) {
-        return null;
+    public Mono<UserDTO> updateUser(Long userId, UserDTO userDTO) {
+        UserEntity userEntity = modelMapper.map(userDTO, UserEntity.class);
+
+        return userDao.updateUser(userId, userEntity)
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .doOnSubscribe(sub -> log.info("Update user with username: {}", userDTO.getUserName()))
+                .doOnSuccess(dto -> log.info("User updated: {}", dto))
+                .doOnError(err -> log.error("Failed to updated user: {}", err.getMessage()));
     }
 
     @Override
-    public Mono<Void> deleteUser(Long id) {
-        return null;
+    public Mono<Void> deleteUser(Long userId) {
+        log.info("Deleting user with ID: {}", userId);
+        return userDao.deleteUser(userId)
+                .flatMap(rows -> {
+                    if (rows > 0) {
+                        return Mono.empty();
+                    } else {
+                        return Mono.error(new RuntimeException("User not found with ID: " + userId));
+                    }
+                });
     }
 }
