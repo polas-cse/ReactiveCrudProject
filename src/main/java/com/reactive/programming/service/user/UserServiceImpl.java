@@ -26,13 +26,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<UserDTO> createUser(UserDTO userDTO) {
-        UserEntity userEntity = modelMapper.map(userDTO, UserEntity.class);
 
-        return userDao.createUser(userEntity)
-                .map(user -> modelMapper.map(user, UserDTO.class))
+        return Mono.just(userDTO)
+                .map(user-> modelMapper.map(userDTO, UserEntity.class))
+                .flatMap(userDao::createUser)
+                .map(user-> modelMapper.map(user, UserDTO.class))
                 .doOnSubscribe(sub -> log.info("Creating user with username: {}", userDTO.getUserName()))
-                .doOnSuccess(dto -> log.info("User created: {}", dto))
-                .doOnError(err -> log.error("Failed to create user: {}", err.getMessage()));
+                .doOnSuccess(p -> log.info("User created: {}", p))
+                .doOnError(err -> log.error("Error creating user: {}", err.getMessage()));
     }
 
     @Override
@@ -54,13 +55,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Mono<UserDTO> updateUser(Long userId, UserDTO userDTO) {
-        UserEntity userEntity = modelMapper.map(userDTO, UserEntity.class);
 
-        return userDao.updateUser(userId, userEntity)
-                .map(user -> modelMapper.map(user, UserDTO.class))
-                .doOnSubscribe(sub -> log.info("Update user with username: {}", userDTO.getUserName()))
-                .doOnSuccess(dto -> log.info("User updated: {}", dto))
-                .doOnError(err -> log.error("Failed to updated user: {}", err.getMessage()));
+        return Mono.just(userDTO)
+                .map(user->modelMapper.map(userDTO, UserEntity.class))
+                .flatMap(user-> userDao.updateUser(userId, user))
+                .map(user-> modelMapper.map(user, UserDTO.class))
+                .doOnSubscribe(sub -> log.info("update user with username: {}", userDTO.getUserName()))
+                .doOnSuccess(p -> log.info("update user: {}", p))
+                .doOnError(err -> log.error("Error update user: {}", err.getMessage()));
     }
 
     @Override

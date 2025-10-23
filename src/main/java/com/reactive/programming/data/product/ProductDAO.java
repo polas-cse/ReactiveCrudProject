@@ -86,8 +86,14 @@ public class ProductDAO {
                     return product;
                 })
                 .one()
-                .doOnSuccess(entity -> log.info("product found with productId: {}", entity.getProductId()))
-                .switchIfEmpty(Mono.error(new RuntimeException("product not found with ID: " + productId)));
+                .doOnSuccess(p -> {
+                    if (p != null) {
+                        log.info("Product found with ID: {}", p.getProductId());
+                    } else {
+                        log.warn("Product not found with ID: {} (returned null)", productId);
+                    }
+                })
+                .switchIfEmpty(Mono.empty());
     }
 
 

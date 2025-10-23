@@ -26,13 +26,13 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Mono<ProductDTO> createProduct(ProductDTO productDTO) {
-        ProductEntity productEntity = modelMapper.map(productDTO, ProductEntity.class);
-
-        return productDao.createProduct(productEntity)
-                .map(product -> modelMapper.map(product, ProductDTO.class))
-                .doOnSubscribe(res -> log.info("Creating product with product name: {}", productEntity.getName()))
-                .doOnSuccess(dto -> log.info("product created: {}", dto))
-                .doOnError(err -> log.error("Failed to create product: {}", err.getMessage()));
+        return Mono.just(productDTO)
+                .map(product -> modelMapper.map(product, ProductEntity.class))
+                .flatMap(productDao::createProduct)
+                .map(entity -> modelMapper.map(entity, ProductDTO.class))
+                .doOnSubscribe(sub -> log.info("Creating product: {}", productDTO.getName()))
+                .doOnSuccess(p -> log.info("Product created: {}", p))
+                .doOnError(err -> log.error("Error creating product: {}", err.getMessage()));
     }
 
     @Override
@@ -56,13 +56,13 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Mono<ProductDTO> updateProduct(Long productId, ProductDTO productDTO) {
-        ProductEntity productEntity = modelMapper.map(productDTO, ProductEntity.class);
-
-        return productDao.updateProduct(productId, productEntity)
-                .map(product -> modelMapper.map(product, ProductDTO.class))
-                .doOnSubscribe(res -> log.info("Update product with name: {}", productEntity.getName()))
-                .doOnSuccess(dto -> log.info("Product updated: {}", dto))
-                .doOnError(err -> log.error("Failed to updated product: {}", err.getMessage()));
+        return Mono.just(productDTO)
+                .map(d -> modelMapper.map(d, ProductEntity.class))
+                .flatMap(p -> productDao.updateProduct(productId, p))
+                .map(entity -> modelMapper.map(entity, ProductDTO.class))
+                .doOnSubscribe(sub -> log.info("Updating product with ID: {}", productId))
+                .doOnSuccess(p -> log.info("Product updated: {}", p))
+                .doOnError(err -> log.error("Failed to update product: {}", err.getMessage()));
     }
 
     @Override

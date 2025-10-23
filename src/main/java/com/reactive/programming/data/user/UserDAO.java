@@ -74,8 +74,14 @@ public class UserDAO {
                     return user;
                 })
                 .one()
-                .doOnSuccess(dto -> log.info("User found: {}", dto.getUserName()))
-                .switchIfEmpty(Mono.error(new RuntimeException("User not found with ID: " + userId)));
+                .doOnSuccess(u -> {
+                    if (u != null) {
+                        log.info("User found with ID: {}", u.getUserId());
+                    } else {
+                        log.warn("User not found with id: {} returned null", userId);
+                    }
+                })
+                .switchIfEmpty(Mono.empty());
     }
     
     
